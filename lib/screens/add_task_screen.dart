@@ -14,7 +14,7 @@ class AddTaskScreen extends StatefulWidget {
 
 class _AddTaskScreenState extends State<AddTaskScreen> {
   final _nameController = TextEditingController();
-  Duration _selectedDuration = const Duration(minutes: 30);
+  Duration _selectedDuration = const Duration(minutes: 1);
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:minhas_tarefas/models/task.dart';
 import 'package:minhas_tarefas/screens/add_task_screen.dart';
@@ -8,12 +9,20 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:minhas_tarefas/providers/task_provider.dart';
 import 'package:minhas_tarefas/screens/task_list_screen.dart';
+import 'package:permission_handler/permission_handler.dart'; // Import the permission_handler package
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Request notification permission
+  if (await Permission.notification.request().isGranted) {
+    log('Notification permission granted.');
+  } else {
+    log('Notification permission denied.');
+  }
 
   // Inicialização do plugin de notificações locais
   const AndroidInitializationSettings initializationSettingsAndroid =
@@ -58,11 +67,37 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Task Timer by Venícius.Dev',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-        colorScheme: ColorScheme.fromSwatch(
-          primarySwatch: Colors.blue,
-        ).copyWith(
-          secondary: Colors.blueAccent,
+        primaryColor: Colors.black, // Cor principal
+        hintColor: Colors.blueAccent, // Cor secundária
+        scaffoldBackgroundColor: Colors.white, // Cor de fundo
+        appBarTheme: const AppBarTheme(
+          color: Colors.black, // Cor da AppBar
+          iconTheme:
+              IconThemeData(color: Colors.white), // Cor dos ícones na AppBar
+          titleTextStyle: TextStyle(
+            color: Colors.white, // Cor do texto na AppBar
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        textTheme: const TextTheme(
+          bodyLarge: TextStyle(color: Colors.black), // Cor do texto principal
+          bodyMedium: TextStyle(color: Colors.black), // Cor do texto secundário
+          headlineLarge: TextStyle(
+              color: Colors.black), // Cor do texto principal em títulos
+          headlineMedium: TextStyle(
+              color: Colors.black), // Cor do texto secundário em títulos
+        ),
+        buttonTheme: const ButtonThemeData(
+          buttonColor: Colors.blueAccent, // Cor do botão
+          textTheme: ButtonTextTheme.primary,
+        ),
+        iconTheme: const IconThemeData(
+          color: Colors.blueAccent, // Cor dos ícones
+        ),
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          backgroundColor: Colors.blueAccent, // Cor do FAB
+          foregroundColor: Colors.white, // Cor do ícone no FAB
         ),
       ),
       home: const MyHomePage(),
