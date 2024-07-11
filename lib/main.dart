@@ -1,15 +1,14 @@
-import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:minhas_tarefas/models/task.dart';
-import 'package:minhas_tarefas/screens/add_task_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:minhas_tarefas/models/task.dart';
 import 'package:minhas_tarefas/providers/task_provider.dart';
 import 'package:minhas_tarefas/screens/task_list_screen.dart';
 import 'package:permission_handler/permission_handler.dart'; // Import the permission_handler package
+import 'package:minhas_tarefas/screens/add_task_screen.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -105,52 +104,8 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatefulWidget {
+class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
-
-  @override
-  // ignore: library_private_types_in_public_api
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  void initState() {
-    super.initState();
-    // Timer para atualização das tarefas e notificações
-    Timer.periodic(const Duration(seconds: 1), (timer) {
-      Provider.of<TaskProvider>(context, listen: false).tasks.forEach((task) {
-        Provider.of<TaskProvider>(context, listen: false).updateTaskTime(task);
-      });
-      Provider.of<TaskProvider>(context, listen: false)
-          .tasks
-          .where((task) => task.isCompleted)
-          .forEach((task) {
-        _showNotification(task.name);
-      });
-    });
-  }
-
-  Future<void> _showNotification(String taskName) async {
-    // Configuração da notificação local
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-      'your channel id',
-      'your channel name',
-      importance: Importance.max,
-      priority: Priority.high,
-      showWhen: false,
-    );
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.show(
-      0,
-      'Tarefa Concluída',
-      '$taskName foi concluída!',
-      platformChannelSpecifics,
-      payload: 'item x',
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
