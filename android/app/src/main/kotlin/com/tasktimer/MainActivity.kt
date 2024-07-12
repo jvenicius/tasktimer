@@ -1,4 +1,4 @@
-package com.example.minhas_tarefas
+package com.tasktimer
 
 import io.flutter.embedding.android.FlutterActivity
 

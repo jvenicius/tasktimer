@@ -19,7 +19,6 @@ class TaskProvider with ChangeNotifier {
         _completedTasks = completedTasks {
     _initNotifications();
     _loadTasks(); // Carregar as tarefas salvas ao inicializar o provider
-    _startPeriodicTaskUpdate(); // Iniciar o update periódico
   }
 
   List<Task> get completedTasks => _completedTasks;
@@ -54,6 +53,12 @@ class TaskProvider with ChangeNotifier {
           completedTasksJson.map((json) => Task.fromJson(jsonDecode(json))));
     }
 
+    // Ativar temporizadores para tarefas em andamento
+    for (var task in _tasks) {
+      if (!task.isCompleted && !task.isPaused) {
+        _startTaskTimer(task);
+      }
+    }
     notifyListeners(); // Notificar os ouvintes após carregar as tarefas
   }
 
@@ -76,14 +81,52 @@ class TaskProvider with ChangeNotifier {
   void addTask(Task task) {
     _tasks.add(task);
     _saveTasks();
+    if (!task.isPaused && !task.isCompleted) {
+      _startTaskTimer(task);
+    }
     notifyListeners();
   }
 
   // Alternar pausa de uma tarefa
   void togglePauseTask(Task task) {
     task.isPaused = !task.isPaused;
+    if (!task.isPaused && !task.isCompleted) {
+      _startTaskTimer(task);
+    } else {
+      _cancelTaskTimer(task);
+    }
     _saveTasks();
     notifyListeners();
+  }
+
+  void _startTaskTimer(Task task) {
+    if (task.isCompleted || task.isPaused || task.timer != null) {
+      return; // Não iniciar timer se a tarefa já estiver concluída, pausada ou se já houver um timer ativo
+    }
+
+    const oneSecond = Duration(seconds: 1);
+    task.timer = Timer.periodic(oneSecond, (timer) {
+      if (!task.isPaused) {
+        task.remainingTime -= oneSecond;
+        if (task.remainingTime <= Duration.zero) {
+          task.isCompleted = true;
+          _completedTasks.add(task);
+          _tasks.remove(task); // Remover da lista de tarefas ativas
+          _cancelTaskTimer(task);
+          _showTaskCompletionNotification(task);
+          _saveTasks();
+          notifyListeners();
+        } else {
+          notifyListeners(); // Notificar mudanças no tempo restante
+        }
+      }
+    });
+  }
+
+  // Cancelar temporizador de uma tarefa
+  void _cancelTaskTimer(Task task) {
+    task.timer?.cancel();
+    task.timer = null;
   }
 
   // Exibir notificação de conclusão de tarefa
@@ -107,22 +150,6 @@ class TaskProvider with ChangeNotifier {
     );
   }
 
-  // Atualizar tempo da tarefa
-  void updateTaskTime(Task task) {
-    if (!task.isPaused && !task.isCompleted) {
-      const oneSecond = Duration(seconds: 1);
-      task.remainingTime -= oneSecond;
-      if (task.remainingTime <= Duration.zero) {
-        task.isCompleted = true;
-        _completedTasks.add(task);
-        _tasks.remove(task); // Remover da lista de tarefas ativas
-        _showTaskCompletionNotification(task);
-        _saveTasks();
-      }
-      notifyListeners();
-    }
-  }
-
   void removeTask(Task task) {
     if (_tasks.contains(task)) {
       _tasks.remove(task); // Remover da lista de tarefas ativas
@@ -131,16 +158,5 @@ class TaskProvider with ChangeNotifier {
     }
     _saveTasks();
     notifyListeners();
-  }
-
-  // Método para iniciar a atualização periódica das tarefas
-  void _startPeriodicTaskUpdate() {
-    Timer.periodic(const Duration(seconds: 1), (timer) {
-      for (var task in _tasks) {
-        if (!task.isPaused && !task.isCompleted) {
-          updateTaskTime(task);
-        }
-      }
-    });
   }
 }

@@ -1,6 +1,6 @@
-import 'package:duration_picker/duration_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
 import '../models/task.dart';
 import '../providers/task_provider.dart';
 
@@ -30,23 +30,25 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
               decoration: const InputDecoration(labelText: 'Nome da Tarefa'),
             ),
             const SizedBox(height: 20),
-            Text("Duração: ${_selectedDuration.inMinutes} minutos"),
-            const SizedBox(height: 20),
-            Center(
-              child: ElevatedButton(
-                onPressed: () async {
-                  Duration? pickedDuration = await showDurationPicker(
-                    context: context,
-                    initialTime: _selectedDuration,
+            const Text("Duração:"),
+            TimePickerSpinner(
+              is24HourMode: true,
+              normalTextStyle:
+                  const TextStyle(fontSize: 24, color: Colors.grey),
+              highlightedTextStyle:
+                  const TextStyle(fontSize: 24, color: Colors.black),
+              spacing: 50,
+              itemHeight: 60,
+              isForce2Digits: true,
+              minutesInterval: 1,
+              onTimeChange: (time) {
+                setState(() {
+                  _selectedDuration = Duration(
+                    hours: time.hour,
+                    minutes: time.minute,
                   );
-                  if (pickedDuration != null) {
-                    setState(() {
-                      _selectedDuration = pickedDuration;
-                    });
-                  }
-                },
-                child: const Text('Selecionar Duração'),
-              ),
+                });
+              },
             ),
             const SizedBox(height: 20),
             Center(

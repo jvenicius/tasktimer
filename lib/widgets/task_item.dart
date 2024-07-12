@@ -22,6 +22,7 @@ class _TaskItemState extends State<TaskItem> {
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if(!widget.isCompleted)
           AnimatedBuilder(
             animation: Provider.of<TaskProvider>(context, listen: false),
             builder: (context, child) {
@@ -34,14 +35,14 @@ class _TaskItemState extends State<TaskItem> {
           Text(
             widget.isCompleted
                 ? 'Tarefa concluída'
-                : 'Tempo restante: ${widget.task.remainingTime.inMinutes.remainder(60)}:${(widget.task.remainingTime.inSeconds % 60).toString().padLeft(2, '0')}',
+                : 'Tempo restante: ${widget.task.remainingTime.inHours.remainder(60)}:${widget.task.remainingTime.inMinutes.remainder(60)}:${(widget.task.remainingTime.inSeconds % 60).toString().padLeft(2, '0')}',
           ),
         ],
       ),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if(!widget.task.isCompleted)
+          if(!widget.isCompleted)
           IconButton(
             icon: Icon(widget.task.isPaused ? Icons.play_arrow : Icons.pause),
             onPressed: () {

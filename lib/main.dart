@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:minhas_tarefas/models/task.dart';
-import 'package:minhas_tarefas/providers/task_provider.dart';
-import 'package:minhas_tarefas/screens/task_list_screen.dart';
+import 'package:task_timer/models/task.dart';
+import 'package:task_timer/providers/task_provider.dart';
+import 'package:task_timer/screens/task_list_screen.dart';
 import 'package:permission_handler/permission_handler.dart'; // Import the permission_handler package
-import 'package:minhas_tarefas/screens/add_task_screen.dart';
+import 'package:task_timer/screens/add_task_screen.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
