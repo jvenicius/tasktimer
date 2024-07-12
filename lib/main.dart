@@ -10,6 +10,7 @@ import 'package:task_timer/screens/task_list_screen.dart';
 import 'package:permission_handler/permission_handler.dart'; // Import the permission_handler package
 import 'package:task_timer/screens/add_task_screen.dart';
 
+
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
@@ -48,6 +49,8 @@ void main() async {
         .map((taskJson) => Task.fromJson(jsonDecode(taskJson)))
         .toList();
   }
+
+  await Future.delayed(const Duration(seconds: 2));
 
   runApp(
     ChangeNotifierProvider(

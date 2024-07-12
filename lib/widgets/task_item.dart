@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:task_timer/widgets/custom_linear_progress_bar.dart';
 import '../providers/task_provider.dart';
 import '../models/task.dart';
 
@@ -26,7 +27,7 @@ class _TaskItemState extends State<TaskItem> {
           AnimatedBuilder(
             animation: Provider.of<TaskProvider>(context, listen: false),
             builder: (context, child) {
-              return LinearProgressIndicator(
+              return CustomLinearProgressBar(
                 value: widget.task.remainingTime.inSeconds /
                     widget.task.duration.inSeconds,
               );
@@ -44,14 +45,14 @@ class _TaskItemState extends State<TaskItem> {
         children: [
           if(!widget.isCompleted)
           IconButton(
-            icon: Icon(widget.task.isPaused ? Icons.play_arrow : Icons.pause),
+            icon: Icon(widget.task.isPaused ? Icons.play_arrow : Icons.pause, color: Colors.green),
             onPressed: () {
               Provider.of<TaskProvider>(context, listen: false)
                   .togglePauseTask(widget.task);
             },
           ),
           IconButton(
-            icon: const Icon(Icons.delete),
+            icon: const Icon(Icons.delete, color: Colors.red),
             onPressed: () {
               Provider.of<TaskProvider>(context, listen: false)
                   .removeTask(widget.task);
